@@ -1,3 +1,15 @@
+// Package awssessioncache provides a cache of aws/session by region.
+// This package is concurrency safe.
+//
+// Usage:
+// 	import sc "github.com/rynop/awssessioncache"
+//	...
+//	sess, err := sc.Get(&sc.Conf{})
+// 	if err != nil {
+// 		return nil, err
+// 	}
+// 	uploader := s3manager.NewUploader(sess)
+//	...
 package awssessioncache
 
 import (
@@ -26,7 +38,8 @@ func (m *atomicSessionMap) set(region string, val *session.Session) {
 	m.sessionsByRegion[region] = val
 }
 
-// Conf for session
+// Conf is the config for a session cache.
+// If region is omitted, will use the `AWS_REGION` env var
 type Conf struct {
 	region string
 }
@@ -35,7 +48,8 @@ var sessionByRegionCache = atomicSessionMap{
 	sessionsByRegion: make(map[string]*session.Session),
 }
 
-// Get an aws sdk session by region
+// Get an aws sdk session by region.
+// If Conf is empty, will use default region defined in `AWS_REGION` env var
 func Get(c *Conf) (*session.Session, error) {
 	if c.region == "" {
 		// no region passed? use default
