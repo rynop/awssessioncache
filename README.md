@@ -1,4 +1,4 @@
-# awssessioncache
+# AWS Session Cache
 
 AWS SDK session cache by region
 
@@ -9,7 +9,7 @@ import (
     sc "github.com/rynop/awssessioncache"
 )
 ...
-	sess, err := sc.Get(&sessioncache.Conf{})
+	sess, err := sc.Get(&sc.Conf{})
 	if err != nil {
 		fmt.Println("oops",err)
 	}
