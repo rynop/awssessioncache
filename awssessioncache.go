@@ -41,7 +41,7 @@ func (m *atomicSessionMap) set(region string, val *session.Session) {
 // Conf is the config for a session cache.
 // If region is omitted, will use the `AWS_REGION` env var
 type Conf struct {
-	region string
+	Region string
 }
 
 var sessionByRegionCache = atomicSessionMap{
@@ -51,20 +51,20 @@ var sessionByRegionCache = atomicSessionMap{
 // Get an aws sdk session by region.
 // If Conf is empty, will use default region defined in `AWS_REGION` env var
 func Get(c *Conf) (*session.Session, error) {
-	if c.region == "" {
+	if c.Region == "" {
 		// no region passed? use default
-		region, _ := os.LookupEnv("AWS_REGION")
-		c.region = region
+		r, _ := os.LookupEnv("AWS_REGION")
+		c.Region = r
 	}
 
-	if s, exists := sessionByRegionCache.get(c.region); exists {
+	if s, exists := sessionByRegionCache.get(c.Region); exists {
 		return s, nil
 	}
 
-	sess, err := session.NewSession(&aws.Config{Region: &c.region})
+	sess, err := session.NewSession(&aws.Config{Region: &c.Region})
 	if err != nil {
 		return nil, err
 	}
-	sessionByRegionCache.set(c.region, sess)
+	sessionByRegionCache.set(c.Region, sess)
 	return sess, nil
 }
